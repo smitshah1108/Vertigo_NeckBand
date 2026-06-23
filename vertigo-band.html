@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertigo Band — WRO Future Innovators</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #060810;
+    --surface:   #0d1120;
+    --card:      #111827;
+    --border:    rgba(255,255,255,0.07);
+    --accent:    #16FFBB;
+    --accent2:   #37A7E7;
+    --accent3:   #9D6FFF;
+    --warn:      #FF6B6B;
+    --text:      #E0E4F0;
+    --muted:     #6B7499;
+    --heading:   #F0FCFF;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Space Grotesk', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2.5rem;
+    background: rgba(6,8,16,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--accent); }
+
+  .nav-badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.25rem 0.75rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Signature: animated radial pulse from center — like a gyroscope signal */
+  .hero-pulse {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    pointer-events: none;
+  }
+
+  .pulse-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    animation: pulse-out 4s ease-out infinite;
+    opacity: 0;
+  }
+
+  .pulse-ring:nth-child(1) { width: 120px; height: 120px; animation-delay: 0s; }
+  .pulse-ring:nth-child(2) { width: 240px; height: 240px; animation-delay: 1s; }
+  .pulse-ring:nth-child(3) { width: 380px; height: 380px; animation-delay: 2s; }
+  .pulse-ring:nth-child(4) { width: 540px; height: 540px; animation-delay: 3s; }
+
+  @keyframes pulse-out {
+    0%   { opacity: 0.6; transform: translate(-50%,-50%) scale(0.6); }
+    100% { opacity: 0;   transform: translate(-50%,-50%) scale(1); }
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .hero h1 {
+    font-family: var(--sans);
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+    margin: 0 auto 3rem;
+    position: relative;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 2rem;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover { background: #00e2a0; transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+
+  .btn-outline:hover { background: rgba(22,255,187,0.08); transform: translateY(-1px); }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-top: 4rem;
+  }
+
+  .stat {
+    background: var(--bg);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: var(--mono);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.25rem;
+  }
+
+  /* ── SECTIONS ── */
+  section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+
+  .section-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: block;
+    width: 2rem;
+    height: 1px;
+    background: var(--accent2);
+  }
+
+  .section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--heading);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+    line-height: 1.15;
+  }
+
+  .section-body {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 600px;
+  }
+
+  /* ── WHAT IS VERTIGO ── */
+  .vertigo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    margin-top: 3rem;
+  }
+
+  .latin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+  }
+
+  .latin-word {
+    font-family: var(--mono);
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  .latin-meaning {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.5rem;
+  }
+
+  .etymology-arrow {
+    font-family: var(--mono);
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 1rem 0;
+  }
+
+  .conditions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .condition-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .condition-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── SYSTEM LAYERS ── */
+  .layers {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .layer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    transition: border-color 0.25s;
+  }
+
+  .layer:hover { border-color: rgba(22,255,187,0.3); }
+
+  .layer-header {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .layer-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    background: var(--card);
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .layer-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--heading);
+  }
+
+  .layer-tag {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    border: 1px solid;
+    flex-shrink: 0;
+  }
+
+  .tag-green  { color: var(--accent);  border-color: var(--accent);  }
+  .tag-blue   { color: var(--accent2); border-color: var(--accent2); }
+  .tag-purple { color: var(--accent3); border-color: var(--accent3); }
+
+  .layer-body {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .layer-item {
+    padding: 1.5rem 2rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .layer-item:last-child { border-right: none; }
+
+  .layer-item-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .layer-item-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .layer-item-value {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  /* ── ML SECTION ── */
+  .ml-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .ml-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .ml-card:hover { transform: translateY(-3px); border-color: rgba(157,111,255,0.4); }
+
+  .ml-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2));
+  }
+
+  .ml-step {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--accent3);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .ml-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 0.75rem;
+  }
+
+  .ml-card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── POWER SECTION ── */
+  .power-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .power-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+  }
+
+  .power-card h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .power-card p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── PROS / CONS ── */
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .pro-list, .con-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+  }
+
+  .pro-list h3 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+  }
+
+  .con-list h3 {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--warn);
+    margin-bottom: 1.25rem;
+  }
+
+  .pro-item, .con-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .pro-item:last-child, .con-item:last-child { border-bottom: none; }
+
+  .pro-item::before { content: '✓'; color: var(--accent); flex-shrink: 0; font-weight: 700; }
+  .con-item::before { content: '!'; color: var(--warn);   flex-shrink: 0; font-weight: 700; width: 1rem; text-align: center; }
+
+  /* ── PARTS LIST ── */
+  .parts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .part-cell {
+    background: var(--surface);
+    padding: 1.5rem;
+  }
+
+  .part-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .part-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .part-detail {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  /* ── DIVIDER ── */
+  .full-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  footer span { color: var(--accent); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.25rem; }
+    .nav-links { display: none; }
+    .stats-bar { grid-template-columns: repeat(2, 1fr); }
+    .vertigo-grid { grid-template-columns: 1fr; }
+    .layer-body { grid-template-columns: 1fr; }
+    .layer-item { border-right: none; border-bottom: 1px solid var(--border); }
+    .layer-item:last-child { border-bottom: none; }
+    .ml-grid { grid-template-columns: 1fr; }
+    .power-grid { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+    .parts-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ── REDUCED MOTION ── */
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-ring { animation: none; opacity: 0.15; }
+  }
+
+  /* ── CULTURE SECTION ── */
+  .culture-hero {
+    background: linear-gradient(135deg, rgba(157,111,255,0.08) 0%, rgba(55,167,231,0.08) 100%);
+    border: 1px solid rgba(157,111,255,0.2);
+    border-radius: 2rem;
+    padding: 3rem;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .culture-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent3), var(--accent2), var(--accent));
+  }
+
+  .culture-hero-tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+  }
+
+  .culture-hero h3 {
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .culture-hero p {
+    color: var(--muted);
+    font-size: 1rem;
+    max-width: 700px;
+    line-height: 1.7;
+  }
+
+  .wro-areas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .wro-area-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+
+  .wro-area-card:hover { transform: translateY(-3px); }
+
+  .wro-area-card.active {
+    border-color: rgba(22,255,187,0.35);
+  }
+
+  .wro-area-card.active::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .wro-area-card.secondary {
+    border-color: rgba(157,111,255,0.25);
+  }
+
+  .wro-area-card.secondary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent3);
+  }
+
+  .wro-area-num {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .wro-area-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 0.75rem;
+  }
+
+  .wro-area-body {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .wro-fit-badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    margin-top: 1rem;
+  }
+
+  .badge-primary { background: rgba(22,255,187,0.12); color: var(--accent); border: 1px solid rgba(22,255,187,0.3); }
+  .badge-secondary { background: rgba(157,111,255,0.12); color: var(--accent3); border: 1px solid rgba(157,111,255,0.3); }
+
+  .performers-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+  }
+
+  .performer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1.5rem;
+    padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .performer-card:hover { transform: translateY(-3px); border-color: rgba(22,255,187,0.2); }
+
+  .performer-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .performer-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--heading);
+    margin-bottom: 0.4rem;
+  }
+
+  .performer-detail {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .culture-quote {
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 1rem 1rem 0;
+    padding: 1.75rem 2rem;
+    margin-top: 3rem;
+  }
+
+  .culture-quote p {
+    font-size: 1.05rem;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .culture-quote cite {
+    display: block;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-top: 1rem;
+    font-style: normal;
+  }
+
+  @media (max-width: 768px) {
+    .wro-areas { grid-template-columns: 1fr; }
+    .performers-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Vertigo Band</div>
+  <ul class="nav-links">
+    <li><a href="#what">Vertigo</a></li>
+    <li><a href="#system">System</a></li>
+    <li><a href="#ml">ML</a></li>
+    <li><a href="#power">Power</a></li>
+    <li><a href="#specs">Parts</a></li>
+    <li><a href="#culture">Culture</a></li>
+  </ul>
+  <div class="nav-badge">WRO 2026 · Future Innovators</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-pulse" aria-hidden="true">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+  </div>
+
+  <div class="hero-eyebrow">WRO 2026 Future Innovators · Vertigo Band</div>
+
+  <h1>Feel the <em>signal</em><br>before the fall.</h1>
+
+  <p class="hero-sub">
+    A wearable neckband that detects dangerous head angles, alerts the patient instantly via haptic vibration, and logs every episode to a Raspberry Pi for clinical review.
+  </p>
+
+  <div class="hero-cta">
+    <a href="#system" class="btn btn-primary">Explore the system</a>
+    <a href="#specs" class="btn btn-outline">Parts list</a>
+  </div>
+</div>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <span class="stat-value">3</span>
+    <span class="stat-label">System layers</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">~30°</span>
+    <span class="stat-label">Trigger threshold</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">0ms</span>
+    <span class="stat-label">Cloud dependency</span>
+  </div>
+  <div class="stat">
+    <span class="stat-value">24/7</span>
+    <span class="stat-label">Hot-swap runtime</span>
+  </div>
+</div>
+
+<!-- WHAT IS VERTIGO -->
+<section id="what">
+  <div class="section-eyebrow">Background</div>
+  <h2 class="section-title">What is vertigo?</h2>
+  <p class="section-body">
+    Vertigo is a symptom, not a disease — the false sensation of spinning or movement. It's caused by underlying conditions and can lead to dangerous falls. This device is a non-invasive short-term companion to treatment.
+  </p>
+
+  <div class="vertigo-grid">
+    <div class="latin-card">
+      <div class="latin-word">vertere</div>
+      <div class="latin-meaning">Latin — "to turn"</div>
+      <div class="etymology-arrow">↓</div>
+      <div class="latin-word" style="font-size:2rem;">vertigo</div>
+      <div class="latin-meaning">"a whirling" — false sensation of movement</div>
+    </div>
+
+    <div class="conditions">
+      <div style="font-family:var(--mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:0.5rem;">Common causes</div>
+      <div class="condition-pill">
+        <div class="condition-dot" style="background:var(--accent);"></div>
+        <strong>BPPV</strong>&nbsp;— benign paroxysmal positional vertigo
+      </div>
+      <div class="condition-pill">
+        <div class="condition-dot" style="background:var(--accent2);"></div>
+        <strong>Ménière's disease</strong>&nbsp;— inner ear fluid disorder
+      </div>
+      <div class="condition-pill">
+        <div class="condition-dot" style="background:var(--accent3);"></div>
+        <strong>Vestibular neuritis</strong>&nbsp;— nerve inflammation
+      </div>
+      <div style="margin-top:1rem;padding:1.25rem;background:var(--card);border:1px solid var(--border);border-radius:1rem;font-size:0.9rem;color:var(--muted);">
+        Treatment is <strong style="color:var(--text);">surgery or therapy</strong> — Vertigo Band is a <strong style="color:var(--accent);">non-invasive short-term companion</strong> to either.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- SYSTEM -->
+<section id="system">
+  <div class="section-eyebrow">Architecture</div>
+  <h2 class="section-title">Three-layer system</h2>
+  <p class="section-body">
+    The neckband senses, acts, and transmits simultaneously — the Pi stores everything for review.
+  </p>
+
+  <div class="layers">
+
+    <!-- Layer 1 -->
+    <div class="layer">
+      <div class="layer-header">
+        <div class="layer-num">LAYER 01</div>
+        <div class="layer-title">The Wearable Neckband — Senses &amp; Acts</div>
+        <div class="layer-tag tag-green">On-body</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item">
+          <div class="layer-item-icon">🧠</div>
+          <div class="layer-item-label">ESP32</div>
+          <div class="layer-item-value">Central brain — runs ML inference, manages Wi-Fi, drives motor</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">📐</div>
+          <div class="layer-item-label">MPU-6050</div>
+          <div class="layer-item-value">Gyroscope + accelerometer — 3-axis continuous head angle monitoring via I²C</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">📳</div>
+          <div class="layer-item-label">Vibration Motor</div>
+          <div class="layer-item-value">Haptic alert fired instantly when dangerous angle is detected — no cloud needed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="layer">
+      <div class="layer-header">
+        <div class="layer-num">LAYER 02</div>
+        <div class="layer-title">Wireless Link — UDP/HTTP Packets</div>
+        <div class="layer-tag tag-blue">Local Wi-Fi</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item">
+          <div class="layer-item-icon">📡</div>
+          <div class="layer-item-label">Protocol</div>
+          <div class="layer-item-value">UDP or HTTP packets sent over local Wi-Fi — no internet required</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">📦</div>
+          <div class="layer-item-label">Payload</div>
+          <div class="layer-item-value">Pitch · Roll · Yaw angles, timestamp, alert flag</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">🔋</div>
+          <div class="layer-item-label">Battery strategy</div>
+          <div class="layer-item-value">Wi-Fi bursts every few minutes; alert logic stays fully offline</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Layer 3 -->
+    <div class="layer">
+      <div class="layer-header">
+        <div class="layer-num">LAYER 03</div>
+        <div class="layer-title">Raspberry Pi — The Data Library</div>
+        <div class="layer-tag tag-purple">Bedside unit</div>
+      </div>
+      <div class="layer-body">
+        <div class="layer-item">
+          <div class="layer-item-icon">👂</div>
+          <div class="layer-item-label">Socket listener</div>
+          <div class="layer-item-value">Python script receives packets and timestamps every event</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">📊</div>
+          <div class="layer-item-label">CSV logger</div>
+          <div class="layer-item-value">Appends angle data and alert count — doctors review daily trigger patterns</div>
+        </div>
+        <div class="layer-item">
+          <div class="layer-item-icon">🖥️</div>
+          <div class="layer-item-label">Flask dashboard</div>
+          <div class="layer-item-value">Optional local web UI shows live angle graph and alert history</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- ML -->
+<section id="ml">
+  <div class="section-eyebrow">Intelligence</div>
+  <h2 class="section-title">Machine learning on the edge</h2>
+  <p class="section-body">
+    Instead of a fixed threshold, the ESP32 runs a TFLite Micro model trained on each patient's personal movement data — personalized medicine on a microcontroller.
+  </p>
+
+  <div class="ml-grid">
+    <div class="ml-card">
+      <div class="ml-step">Phase 01 · Calibration</div>
+      <h3>Label your own episodes</h3>
+      <p>During the calibration period, the patient presses a button on the neckband when they experience a real vertigo episode. That labels the IMU data as a genuine trigger.</p>
+    </div>
+    <div class="ml-card">
+      <div class="ml-step">Phase 02 · Training</div>
+      <h3>Pi trains overnight</h3>
+      <p>The Raspberry Pi trains a personalized model using Edge Impulse, learning the difference between real triggers and normal actions like sleeping, stretching, or looking up.</p>
+    </div>
+    <div class="ml-card">
+      <div class="ml-step">Phase 03 · Inference</div>
+      <h3>ESP32 runs on-device</h3>
+      <p>The trained TFLite Micro model is flashed to the ESP32. Inference runs locally — zero latency, no internet, no privacy concerns. The Pi re-trains periodically to improve accuracy.</p>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- POWER -->
+<section id="power">
+  <div class="section-eyebrow">Power System</div>
+  <h2 class="section-title">Zero-downtime hot-swap batteries</h2>
+  <p class="section-body">
+    A medical device can't run out of power mid-day. Two LiPo batteries wired through Schottky diodes keep the system alive continuously — swap one while the other feeds the ESP32.
+  </p>
+
+  <div class="power-grid">
+    <div class="power-card">
+      <h3>⚡ Hot-swap circuit</h3>
+      <p>Two 3.7V 1000mAh LiPo cells connected in parallel via 1N5819 Schottky diodes. Whichever has higher voltage feeds the system. Swap the external cell while the internal one keeps everything running.</p>
+    </div>
+    <div class="power-card">
+      <h3>🔌 Dual TP4056 charging</h3>
+      <p>Each LiPo has its own TP4056 charging module. They charge independently via USB-C, so both batteries can be topped up simultaneously without any downtime to the system.</p>
+    </div>
+    <div class="power-card">
+      <h3>🧮 Runtime estimate</h3>
+      <p>ESP32 + TFLite inference + Wi-Fi burst mode draws ~80–100mA average. Two 1000mAh cells give approximately 8–10 hours continuous wear — well beyond a full patient day.</p>
+    </div>
+    <div class="power-card">
+      <h3>📢 WRO talking point</h3>
+      <p>"Unlike most wearables, this device has zero downtime — critical for a medical device that must protect the patient 24/7, not just when it's charged."</p>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- PROS CONS -->
+<section>
+  <div class="section-eyebrow">Evaluation</div>
+  <h2 class="section-title">Strengths &amp; limitations</h2>
+
+  <div class="pros-cons">
+    <div class="pro-list">
+      <h3>✓ Project strengths</h3>
+      <div class="pro-item">Non-invasive and immediate — warns before the fall, not after</div>
+      <div class="pro-item">Personalized ML model adapts to each patient's unique trigger pattern</div>
+      <div class="pro-item">Longitudinal data logging lets doctors track daily trigger frequency</div>
+      <div class="pro-item">Fully local — no cloud, no subscription, privacy preserved</div>
+      <div class="pro-item">Comfortable soft neckband design, suitable for long-term wear</div>
+      <div class="pro-item">Zero downtime via hot-swappable dual-LiPo power system</div>
+    </div>
+    <div class="con-list">
+      <h3>! Known challenges</h3>
+      <div class="con-item">ESP32 battery drain is higher with ML inference running</div>
+      <div class="con-item">Calibration period required before model reaches full accuracy</div>
+      <div class="con-item">Initial false positives possible until sufficient labelled data is collected</div>
+      <div class="con-item">Wi-Fi range limited to same network as Raspberry Pi</div>
+      <div class="con-item">Neckband comfort varies by patient neck size and sensitivity</div>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- PARTS -->
+<section id="specs">
+  <div class="section-eyebrow">Hardware</div>
+  <h2 class="section-title">Parts list (for now)</h2>
+
+  <div class="parts-grid">
+    <div class="part-cell">
+      <div class="part-num">01</div>
+      <div class="part-name">Raspberry Pi 4 or 5</div>
+      <div class="part-detail">min 2GB RAM</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">02</div>
+      <div class="part-name">XIAO ESP32-S3</div>
+      <div class="part-detail">Mini form factor</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">03</div>
+      <div class="part-name">MPU-6050</div>
+      <div class="part-detail">Gyro + accel, I²C</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">04</div>
+      <div class="part-name">Vibration Motor</div>
+      <div class="part-detail">ERM, GPIO driven</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">05</div>
+      <div class="part-name">LiPo 1000mAh × 2</div>
+      <div class="part-detail">3.7V, hot-swappable</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">06</div>
+      <div class="part-name">TP4056 × 2</div>
+      <div class="part-detail">LiPo charger modules</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">07</div>
+      <div class="part-name">1N5819 Diodes</div>
+      <div class="part-detail">Schottky, hot-swap circuit</div>
+    </div>
+    <div class="part-cell">
+      <div class="part-num">08</div>
+      <div class="part-name">RGB LED Strip</div>
+      <div class="part-detail">Status indication</div>
+    </div>
+  </div>
+</section>
+
+<div class="full-divider"></div>
+
+<!-- CULTURE -->
+<section id="culture">
+  <div class="section-eyebrow">WRO 2026 Theme</div>
+  <h2 class="section-title">Robots Meet Culture</h2>
+  <p class="section-body">
+    Vertigo Band isn't just a medical device — it's a guardian of India's living cultural heritage, protecting the human artists who carry it forward.
+  </p>
+
+  <div class="culture-hero" style="margin-top:3rem;">
+    <div class="culture-hero-tag">The Problem Nobody Talks About</div>
+    <h3>India's classical performers are at risk — from within</h3>
+    <p>
+      Bharatanatyam. Kathak. Kuchipudi. Manipuri. India's classical dance forms are UNESCO-recognized cultural heritage — but the artists who practice them spend years executing intense, repetitive head and neck movements. Without real-time feedback, incorrect angles and overextension cause cumulative injury that ends careers silently. When a dancer stops, centuries of embodied tradition stop with them. Vertigo Band is a wearable robotic co-creator — a technological partner that watches, warns, and protects so the art never has to stop.
+    </p>
+  </div>
+
+  <div class="wro-areas">
+    <div class="wro-area-card active">
+      <div class="wro-area-num">Area 2 — Primary fit</div>
+      <div class="wro-area-title">Co-Creation: Humans, Robots & AI</div>
+      <div class="wro-area-body">
+        WRO defines this area as robots that "support artists, musicians, and performers — not replace their skill or creativity." Vertigo Band is exactly that: a real-time robotic partner that senses the dancer's movement, runs on-device ML inference, and intervenes only when the body is at risk. The artist leads; the robot protects.
+      </div>
+      <span class="wro-fit-badge badge-primary">✓ Direct match</span>
+    </div>
+    <div class="wro-area-card secondary">
+      <div class="wro-area-num">Area 1 — Secondary fit</div>
+      <div class="wro-area-title">Protecting & Preserving Cultural Heritage</div>
+      <div class="wro-area-body">
+        WRO's Area 1 asks teams to protect what carries culture forward. Vertigo Band preserves not manuscripts or monuments, but the living human practitioners of classical art — the most irreplaceable cultural resource of all. A dancer who cannot perform is a tradition that cannot be passed on.
+      </div>
+      <span class="wro-fit-badge badge-secondary">✓ Strong alignment</span>
+    </div>
+  </div>
+
+  <div class="section-eyebrow" style="margin-bottom:1.5rem;">Who it protects</div>
+  <div class="performers-grid">
+    <div class="performer-card">
+      <div class="performer-icon">💃</div>
+      <div class="performer-name">Bharatanatyam Dancers</div>
+      <div class="performer-detail">Rapid head isolations, aramandi posture, and prolonged neck extensions over years of training create cumulative strain — detected and flagged in real time.</div>
+    </div>
+    <div class="performer-card">
+      <div class="performer-icon">🥁</div>
+      <div class="performer-name">Classical Musicians</div>
+      <div class="performer-detail">Violinists, veena players, and tabla artists hold asymmetric neck positions for hours — repetitive strain that builds silently until it becomes injury.</div>
+    </div>
+    <div class="performer-card">
+      <div class="performer-icon">🥋</div>
+      <div class="performer-name">Martial Artists</div>
+      <div class="performer-detail">Kalaripayattu and Chhau performers combine acrobatic movement with intense physical conditioning — neck angle safety is critical to long practice careers.</div>
+    </div>
+    <div class="performer-card">
+      <div class="performer-icon">🩺</div>
+      <div class="performer-name">Vertigo Patients</div>
+      <div class="performer-detail">The original use case: patients experiencing vestibular disorders need real-time haptic alerts when head angle triggers dangerous dizziness episodes.</div>
+    </div>
+    <div class="performer-card">
+      <div class="performer-icon">🏗️</div>
+      <div class="performer-name">Occupational Workers</div>
+      <div class="performer-detail">Surgeons, craftspeople, and construction workers in culturally significant trades — anyone whose work demands sustained neck positioning benefits from live monitoring.</div>
+    </div>
+    <div class="performer-card">
+      <div class="performer-icon">👴</div>
+      <div class="performer-name">Elderly Practitioners</div>
+      <div class="performer-detail">Senior artists continuing to teach and perform face elevated fall and injury risk. The band gives them and their families confidence to keep practicing safely.</div>
+    </div>
+  </div>
+
+  <div class="culture-quote">
+    <p>"A robot should not replace the artist's skill or creativity — but it can support them. Your robot can become a creative partner in real-time: performing with dancers and actors."</p>
+    <cite>— WRO 2026 Mission Document · Area 2: Co-Creation</cite>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span>Vertigo Band</span> — WRO Future Innovators 2026 &nbsp;·&nbsp; ESP32 + MPU-6050 + Raspberry Pi &nbsp;·&nbsp; Built with ❤️
+</footer>
+
+</body>
+</html>
