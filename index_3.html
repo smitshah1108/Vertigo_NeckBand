@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertigo — Wearable Balance Feedback for Indian Classical Dance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=IBM+Plex+Mono:ital,wght@0,100..700;1,100..700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#E8EDE9;
+  --paper:#0B0F0E;
+  --paper-dim:#111613;
+  --gold:#E8A33D;
+  --gold-dim:#A87020;
+  --alta:#E8654A;
+  --peacock:#3ED598;
+  --peacock-dim:#1F5C55;
+  --line: rgba(232,237,233,0.14);
+  --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  --disp: 'Fraunces', 'Georgia', serif;
+  --body: 'Inter', system-ui, sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--body);
+  -webkit-font-smoothing:antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 120%;
+  height: 120%;
+  background: radial-gradient(circle at 15% 15%, rgba(62,213,152,0.04) 0%, transparent 45%),
+              radial-gradient(circle at 85% 80%, rgba(232,101,74,0.03) 0%, transparent 45%);
+  z-index: -1;
+  pointer-events: none;
+}
+/* custom scrollbar global */
+::-webkit-scrollbar{width:8px; height:8px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.15);}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08); border-radius:99px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.16);}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+}
+
+/* ---------- Google-fontless: fallback stack tuned ---------- */
+h1,h2,h3,.disp{font-family:var(--disp);}
+.mono, .eyebrow, .data, code{font-family:var(--mono);}
+
+/* ---------- NAV ---------- */
+nav{
+  position:sticky; top:12px; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 28px;
+  background:rgba(11,15,14,0.7);
+  backdrop-filter:blur(16px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;
+  margin:12px 32px 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  transition: all 0.3s;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.02em;}
+.brand-mark{width:22px;height:22px;flex:none;}
+.brand-name{font-family:var(--disp); font-size:1.15rem;}
+.navlinks{display:flex; gap:28px; align-items:center;}
+.navlinks a{
+  color:var(--ink); text-decoration:none; font-size:0.86rem; 
+  letter-spacing:0.05em; opacity:0.7; transition:all 0.25s;
+  position: relative; padding:4px 0;
+}
+.navlinks a::after {
+  content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1.5px;
+  background: var(--peacock); transition: width 0.25s;
+}
+.navlinks a:hover{opacity:1; color: var(--peacock);}
+.navlinks a:hover::after { width: 100%; }
+.mode-toggle{
+  display:flex; border:1px solid var(--ink); border-radius:999px; overflow:hidden;
+}
+.mode-toggle button{
+  border:none; background:transparent; color:var(--ink); padding:8px 16px;
+  font-family:var(--mono); font-size:0.72rem; letter-spacing:0.05em; cursor:pointer;
+  text-transform:uppercase;
+}
+.mode-toggle button.active{background:var(--ink); color:var(--paper);}
+
+/* ---------- SITE MODE ---------- */
+#site-mode section{padding:120px 32px; max-width:1180px; margin:0 auto;}
+.eyebrow{
+  text-transform:uppercase; letter-spacing:0.16em; font-size:0.72rem;
+  color:var(--alta); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{content:''; width:26px; height:1px; background:var(--alta);}
+
+/* HERO */
+#hero{padding-top:90px; position:relative; overflow:hidden;}
+.hero-grid{display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px; align-items:center;}
+.hero-title{font-size:clamp(2.6rem, 5.2vw, 4.6rem); line-height:0.98; margin:0 0 26px; font-weight:600;}
+.hero-title em{font-style:normal; color:var(--alta);}
+.hero-sub{font-size:1.08rem; line-height:1.6; max-width:46ch; opacity:0.82; margin-bottom:36px;}
+.cta-row{display:flex; gap:14px; flex-wrap:wrap;}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:14px 26px; border-radius:2px;
+  font-family:var(--mono); font-size:0.78rem; letter-spacing:0.04em; text-transform:uppercase;
+  text-decoration:none; cursor:pointer; border:1px solid var(--ink); transition:all 0.25s;
+}
+.btn-solid{background:var(--ink); color:var(--paper);}
+.btn-solid:hover{background:var(--alta); border-color:var(--alta);}
+.btn-outline{background:transparent; color:var(--ink);}
+.btn-outline:hover{background:var(--ink); color:var(--paper);}
+
+.hero-visual{position:relative; aspect-ratio:1/1.05;}
+.hero-visual svg {
+  animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.mudra-ring{
+  position:absolute; inset:0; border-radius:50%;
+  border:1px dashed var(--gold); opacity:0.3;
+  animation: spin 80s linear infinite, pulseGlow 8s ease-in-out infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); opacity: 0.25; }
+  50% { transform: scale(1.04); opacity: 0.45; }
+}
+
+/* STATS STRIP */
+.stats-strip{
+  display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  margin-top:80px;
+}
+.stat{padding:28px 20px; border-right:1px solid var(--line);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:var(--disp); font-size:2.1rem; color:var(--peacock);}
+.stat-label{font-family:var(--mono); font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; opacity:0.65; margin-top:4px;}
+
+/* SECTION HEADERS */
+.sec-head{display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:56px; gap:40px; flex-wrap:wrap;}
+.sec-title{font-size:clamp(1.8rem,3vw,2.6rem); margin:0; font-weight:600; max-width:16ch;}
+.sec-note{max-width:36ch; font-size:0.92rem; opacity:0.7; line-height:1.55;}
+
+/* SYSTEM / ARCHITECTURE */
+#system{background:var(--paper-dim); color:var(--ink);}
+#system .eyebrow{color:var(--gold);}
+#system .eyebrow::before{background:var(--gold);}
+.arch-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(232,237,233,0.16); border:1px solid rgba(232,237,233,0.16);}
+.arch-card{
+  background: linear-gradient(145deg, #111613 0%, #0d110f 100%);
+  padding:36px 30px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.03);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 30px rgba(0,0,0,0.2);
+}
+.arch-card:hover{
+  transform: translateY(-5px);
+  border-color: rgba(62,213,152,0.2);
+  box-shadow: 0 10px 30px rgba(62,213,152,0.04), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.arch-tag{font-family:var(--mono); font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:14px; display:block;}
+.arch-name{font-family:var(--disp); font-size:1.25rem; margin:0 0 10px;}
+.arch-desc{font-size:0.88rem; line-height:1.6; opacity:0.72; margin:0;}
+
+/* PIPELINE */
+#pipeline{}
+.pipe-row{display:grid; grid-template-columns:repeat(5,1fr); gap:0; position:relative; margin-top:40px;}
+.pipe-row::before{content:''; position:absolute; top:22px; left:10%; right:10%; height:2px; background:rgba(255,255,255,0.06); z-index:0;}
+.pipe-node{position:relative; z-index:1; text-align:center; padding:0 12px; transition: transform 0.3s;}
+.pipe-node:hover{transform: translateY(-3px);}
+.pipe-dot{
+  width:44px; height:44px; border-radius:50%; background:#111613; 
+  border:1.5px solid rgba(255,255,255,0.15); display:flex; align-items:center; 
+  justify-content:center; margin:0 auto 18px; font-family:var(--mono); font-size:0.75rem;
+  color: rgba(255,255,255,0.4);
+  transition: all 0.3s;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+.pipe-node.active .pipe-dot{
+  background: var(--peacock); 
+  border-color: var(--peacock); 
+  color: var(--paper);
+  box-shadow: 0 0 15px rgba(62,213,152,0.35);
+  font-weight: bold;
+}
+.pipe-label{font-size:0.86rem; font-weight:600; margin-bottom:6px; color:#fff;}
+.pipe-desc{font-size:0.78rem; opacity:0.62; line-height:1.45;}
+
+/* TEAM / TIMELINE */
+#program{background:var(--paper-dim);}
+.timeline{border-left:2px solid rgba(62,213,152,0.18); padding-left:30px; display:flex; flex-direction:column; gap:38px; margin-top:10px; position:relative;}
+.tl-item{position:relative; transition: all 0.3s;}
+.tl-item::before{
+  content:''; position:absolute; left:-36px; top:5px; width:10px; height:10px; 
+  border-radius:50%; background:var(--alta); border: 2px solid var(--paper-dim);
+  box-shadow: 0 0 10px var(--alta);
+  transition: all 0.3s;
+}
+.tl-item:hover::before {
+  transform: scale(1.3);
+  box-shadow: 0 0 15px var(--alta);
+  background: #fff;
+}
+.tl-item:hover {
+  transform: translateX(4px);
+}
+.tl-tag{font-family:var(--mono); font-size:0.7rem; text-transform:uppercase; color:var(--peacock); letter-spacing:0.08em; opacity:0.8;}
+.tl-title{font-family:var(--disp); font-size:1.35rem; margin:6px 0 6px; color:#fff;}
+.tl-desc{font-size:0.92rem; opacity:0.72; max-width:65ch; line-height:1.6;}
+
+/* CTA / DASHBOARD PROMO */
+#dash-cta{
+  background:linear-gradient(160deg, var(--peacock) 0%, var(--peacock-dim) 100%);
+  color:var(--paper); border-radius:4px; margin:0 32px 120px; padding:70px 50px;
+  display:grid; grid-template-columns:1.3fr 1fr; gap:40px; align-items:center;
+  max-width:1180px; margin-left:auto; margin-right:auto;
+}
+#dash-cta h2{font-size:2.1rem; margin:0 0 16px;}
+#dash-cta p{opacity:0.85; line-height:1.6; margin-bottom:26px; max-width:48ch;}
+.pulse-icon{width:100%; max-width:220px; margin:0 auto;}
+
+footer{border-top:1px solid var(--line); padding:36px 32px; display:flex; justify-content:space-between; font-family:var(--mono); font-size:0.72rem; opacity:0.6; flex-wrap:wrap; gap:10px;}
+
+/* ================= DASHBOARD MODE ================= */
+#dashboard-mode{display:none; background:#0B0F0E; color:#E8EDE9; min-height:100vh;}
+#dashboard-mode.show{display:block;}
+#site-mode.hide{display:none;}
+
+.dash-wrap{max-width:1400px; margin:0 auto; padding:28px 28px 60px;}
+.dash-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; flex-wrap:wrap; gap:16px;}
+.dash-title{font-family:var(--disp); font-size:1.6rem;}
+.conn-status{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:0.78rem;}
+.dot{width:9px; height:9px; border-radius:50%; background:#4a5a54;}
+.dot.live{background:#3ED598; box-shadow:0 0 0 4px rgba(62,213,152,0.15); animation:blink 1.6s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;} 50%{opacity:0.5;}}
+
+.connect-panel{
+  border:1px solid rgba(232,237,233,0.14); border-radius:6px; padding:60px 40px; text-align:center;
+  background:radial-gradient(circle at 50% 0%, rgba(62,213,152,0.06), transparent 60%);
+}
+.connect-panel h3{font-family:var(--disp); font-size:1.5rem; margin:0 0 12px;}
+.connect-panel p{opacity:0.65; max-width:44ch; margin:0 auto 28px; line-height:1.6; font-size:0.92rem;}
+.ble-btn{
+  background:#3ED598; color:#08130F; border:none; padding:15px 30px; border-radius:3px;
+  font-family:var(--mono); font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;
+  display:inline-flex; align-items:center; gap:10px; transition:transform 0.15s;
+}
+.ble-btn:hover{transform:translateY(-1px);}
+.ble-btn:disabled{opacity:0.6; cursor:progress;}
+.scan-list{margin-top:26px; text-align:left; max-width:380px; margin-left:auto; margin-right:auto;}
+.scan-item{
+  display:flex; justify-content:space-between; align-items:center; padding:12px 16px;
+  border:1px solid rgba(232,237,233,0.12); border-radius:4px; margin-bottom:8px; font-family:var(--mono); font-size:0.8rem;
+  cursor:pointer; transition:border-color 0.2s;
+}
+.scan-item:hover{border-color:#3ED598;}
+.scan-item span.sig{opacity:0.5; font-size:0.72rem;}
+
+.dash-grid{display:none; gap:20px; grid-template-columns:1.1fr 0.9fr; margin-top:8px;}
+.dash-grid.show{display:grid;}
+@media (max-width:1000px){.dash-grid{grid-template-columns:1fr;}}
+
+.panel{
+  background:#111613; 
+  border:1px solid rgba(255,255,255,0.05); 
+  border-radius:12px; 
+  padding:24px 28px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+.panel:hover{
+  border-color: rgba(62,213,152,0.12);
+  box-shadow: 0 8px 36px rgba(62,213,152,0.02), 0 8px 32px rgba(0,0,0,0.3);
+}
+.panel-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;}
+.panel-title{font-family:var(--mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; opacity:0.6; color:var(--ink);}
+
+/* Digital twin */
+.twin-stage{
+  aspect-ratio:16/11; display:flex; align-items:center; justify-content:center; position:relative;
+  background:radial-gradient(circle at 50% 40%, rgba(62,213,152,0.05), transparent 65%);
+  border-radius:4px;
+}
+.twin-svg{width:88%; max-width:460px;}
+.twin-caption{position:absolute; bottom:10px; left:14px; font-family:var(--mono); font-size:0.66rem; opacity:0.4;}
+
+.metric-row{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px;}
+.metric{background:#0B0F0E; border:1px solid rgba(232,237,233,0.08); border-radius:4px; padding:14px 16px;}
+.metric-label{font-family:var(--mono); font-size:0.64rem; text-transform:uppercase; opacity:0.5; margin-bottom:6px;}
+.metric-val{font-family:var(--disp); font-size:1.5rem;}
+.metric-val.warn{color:#E8A33D;}
+.metric-val.crit{color:#E8654A;}
+.metric-val.ok{color:#3ED598;}
+
+.chart-wrap{height:130px; margin-top:8px;}
+
+.event-log{height:230px; overflow-y:auto; font-family:var(--mono); font-size:0.76rem; display:flex; flex-direction:column-reverse; gap:6px;}
+.event-log::-webkit-scrollbar{width:5px;}
+.event-log::-webkit-scrollbar-thumb{background:rgba(232,237,233,0.15);}
+.log-line{display:flex; gap:10px; opacity:0.85; border-left:2px solid rgba(232,237,233,0.1); padding-left:10px;}
+.log-line.hit{border-color:#E8654A;}
+.log-line .ts{opacity:0.4;}
+
+.battery-bar{width:100%; height:7px; background:rgba(232,237,233,0.1); border-radius:99px; overflow:hidden; margin-top:6px;}
+.battery-fill{height:100%; background:#3ED598; border-radius:99px; transition:width 0.4s;}
+
+.motor-viz{display:flex; align-items:center; gap:14px; margin-top:14px;}
+.motor-ring{width:54px; height:54px; border-radius:50%; border:2px solid rgba(232,237,233,0.15); display:flex; align-items:center; justify-content:center; position:relative;}
+.motor-ring .pip{width:8px; height:8px; border-radius:50%; background:#3ED598;}
+.motor-ring.buzz{animation:buzz 0.28s infinite;}
+@keyframes buzz{0%,100%{transform:translate(0,0);} 25%{transform:translate(1px,-1px);} 75%{transform:translate(-1px,1px);}}
+
+.slider-row{display:flex; align-items:center; gap:12px; font-family:var(--mono); font-size:0.72rem; margin-top:20px;}
+input[type=range]{
+  flex:1; 
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.08);
+  height: 6px;
+  border-radius: 99px;
+  outline: none;
+  transition: background 0.2s;
+}
+input[type=range]:hover {
+  background: rgba(255,255,255,0.14);
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--peacock);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(62,213,152,0.4);
+  transition: transform 0.1s, background 0.1s;
+}
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #fff;
+}
+
+@media (max-width: 720px){
+  .hero-grid{grid-template-columns:1fr;}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .arch-grid{grid-template-columns:1fr;}
+  .pipe-row{grid-template-columns:repeat(2,1fr); row-gap:24px; padding:0 10px;}
+  .pipe-row::before{display:none;}
+  #dash-cta{grid-template-columns:1fr;}
+  nav{padding:12px 18px; margin:8px 8px 0; top:8px;}
+  .navlinks{display:none;}
+  #site-mode section{padding:70px 20px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 24 24" fill="none"><path d="M2 12c1.5-4 4-6 6-6s3.5 2 4 6c.5-4 2-6 4-6s4.5 2 6 6" stroke="var(--alta)" stroke-width="1.6" stroke-linecap="round"/></svg>
+    <span class="brand-name">Vertigo</span>
+  </div>
+  <div class="navlinks">
+    <a href="#system">System</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#program">Program</a>
+  </div>
+  <div class="mode-toggle">
+    <button id="btn-site" class="active">Site</button>
+    <button id="btn-dash">Dashboard</button>
+  </div>
+</nav>
+
+<!-- ============ SITE MODE ============ -->
+<div id="site-mode">
+
+<section id="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">WRO 2026 · Future Innovators · Robots Meet Culture</div>
+      <h1 class="hero-title">Balance, felt<br>before it's <em>lost.</em></h1>
+      <p class="hero-sub">Vertigo is a wearable for Indian classical dance — an on-body inference system that reads a performer's rotation in real time and returns a whisper of vibration a fraction of a second before a fall, through a see-through optical HUD built like a dancer's third eye.</p>
+      <div class="cta-row">
+        <a href="#system" class="btn btn-solid">See the system</a>
+        <button class="btn btn-outline" onclick="switchMode('dash')">Open dashboard →</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="mudra-ring"></div>
+      <svg viewBox="0 0 320 340" width="100%" height="100%" style="position:relative;">
+        <ellipse cx="160" cy="300" rx="90" ry="14" fill="#000" opacity="0.4"/>
+        <!-- glasses frame -->
+        <g stroke="var(--ink)" stroke-width="2.4" fill="none" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M60 130 L120 122 Q160 118 200 122 L260 130"/>
+          <rect x="70" y="130" width="80" height="52" rx="14"/>
+          <rect x="170" y="130" width="80" height="52" rx="14"/>
+          <path d="M150 148 L170 148" />
+          <path d="M60 130 L34 140" />
+          <path d="M260 130 L286 140" />
+        </g>
+        <!-- HUD combiner hint -->
+        <path d="M175 138 L235 138 L228 168 L182 168 Z" fill="var(--gold)" opacity="0.28"/>
+        <circle cx="190" cy="156" r="2.4" fill="var(--alta)"/>
+        <!-- MPU chip on temple -->
+        <rect x="260" y="132" width="16" height="12" rx="2" fill="var(--peacock)" opacity="0.7"/>
+        <text x="20" y="230" font-family="var(--mono)" font-size="10" fill="var(--ink)" opacity="0.55">Pico 2 W · MPU-6050 · ERM · TFLite</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stat"><div class="stat-num">&lt;80ms</div><div class="stat-label">inference-to-alert latency</div></div>
+    <div class="stat"><div class="stat-num">6-axis</div><div class="stat-label">IMU orientation sensing</div></div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">hot-swap LiPo cells</div></div>
+    <div class="stat"><div class="stat-num">BLE</div><div class="stat-label">live dashboard link</div></div>
+  </div>
+</section>
+
+<section id="system">
+  <div class="sec-head">
+    <h2 class="sec-title">One frame, three systems working as one.</h2>
+    <p class="sec-note">Sensing, feedback, and display are built as independent modules on the frame — so a failure in one never blinds the others.</p>
+  </div>
+  <div class="arch-grid">
+    <div class="arch-card">
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; color: var(--gold); margin-bottom: 16px; opacity: 0.85; display: block;">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        <path d="M2 12h20"></path>
+      </svg>
+      <span class="arch-tag">Sense</span>
+      <h3 class="arch-name">MPU-6050 IMU</h3>
+      <p class="arch-desc">A 6-axis accelerometer/gyroscope reads head and body rotation at high frequency, capturing precise angular velocity and acceleration.</p>
+    </div>
+    <div class="arch-card">
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; color: var(--peacock); margin-bottom: 16px; opacity: 0.85; display: block;">
+        <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+        <rect x="9" y="9" width="6" height="6"></rect>
+        <line x1="9" y1="1" x2="9" y2="4"></line>
+        <line x1="15" y1="1" x2="15" y2="4"></line>
+        <line x1="9" y1="20" x2="9" y2="23"></line>
+        <line x1="15" y1="20" x2="15" y2="23"></line>
+        <line x1="20" y1="9" x2="23" y2="9"></line>
+        <line x1="20" y1="15" x2="23" y2="15"></line>
+        <line x1="1" y1="9" x2="4" y2="9"></line>
+        <line x1="1" y1="15" x2="4" y2="15"></line>
+      </svg>
+      <span class="arch-tag">Think</span>
+      <h3 class="arch-name">Raspberry Pi Pico 2 W + Edge Impulse</h3>
+      <p class="arch-desc">A TFLite model trained on spin sequences runs entirely on-device, classifying balance state frame-by-frame with no round trip to the cloud.</p>
+    </div>
+    <div class="arch-card">
+      <svg class="card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 32px; height: 32px; color: var(--alta); margin-bottom: 16px; opacity: 0.85; display: block;">
+        <path d="M2 12h20M7 12c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm10 0c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"></path>
+        <path d="M12 6a3 3 0 0 1 3-3M12 9a6 6 0 0 1 6-6" opacity="0.7"></path>
+      </svg>
+      <span class="arch-tag">Respond</span>
+      <h3 class="arch-name">ERM motor + optical HUD</h3>
+      <p class="arch-desc">A vibration driver returns a directional cue to the dancer's temple, while a combiner-mirror HUD — architected like a split Vision Pro display — shows a subtle heads-up correction.</p>
+    </div>
+  </div>
+</section>
+
+<section id="pipeline">
+  <div class="sec-head">
+    <h2 class="sec-title">From spin to signal in under a tenth of a second.</h2>
+    <p class="sec-note">Every rotation the dancer makes moves through this chain, continuously, on-device.</p>
+  </div>
+  <div class="pipe-row">
+    <div class="pipe-node active"><div class="pipe-dot">01</div><div class="pipe-label">Capture</div><div class="pipe-desc">IMU samples at high rate</div></div>
+    <div class="pipe-node active"><div class="pipe-dot">02</div><div class="pipe-label">Infer</div><div class="pipe-desc">On-device TFLite classification</div></div>
+    <div class="pipe-node active"><div class="pipe-dot">03</div><div class="pipe-label">Decide</div><div class="pipe-desc">Balance-state threshold check</div></div>
+    <div class="pipe-node"><div class="pipe-dot">04</div><div class="pipe-label">Cue</div><div class="pipe-desc">ERM motor + HUD marker fire</div></div>
+    <div class="pipe-node"><div class="pipe-dot">05</div><div class="pipe-label">Log</div><div class="pipe-desc">Pico 2 W streams directly over BLE</div></div>
+  </div>
+</section>
+
+<section id="program" style="padding-top:100px; padding-bottom:100px;">
+  <div class="sec-head">
+    <h2 class="sec-title">Built for WRO 2026, Future Innovators.</h2>
+    <p class="sec-note">Team CultureWear, Life Robotics.</p>
+  </div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-tag">Origin</div>
+      <div class="tl-title">Reframed around "Robots Meet Culture"</div>
+      <div class="tl-desc">What began as a general motion-feedback band was rebuilt from the frame up around Indian classical dance — grounding every design decision in a real performance discipline rather than a generic fitness use case.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-tag">Build</div>
+      <div class="tl-title">Component sourcing under real constraints</div>
+      <div class="tl-desc">Raspberry Pi Pico 2 W chosen for its dual ARM Cortex-M33 cores and low power consumption. Vibration driver current draw balanced against hot-swap LiPo runtime for full rehearsal sessions.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-tag">Validate</div>
+      <div class="tl-title">Model evaluation, honestly reported</div>
+      <div class="tl-desc">Near-perfect training metrics were flagged, not celebrated — treated as a signal of possible overfitting or data leakage and re-tested against held-out rehearsal footage.</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-tag">Now</div>
+      <div class="tl-title">Official WRO 2026 entry</div>
+      <div class="tl-desc">Confirmed as Life Robotics' official Future Innovators submission. Documentation and reporting are in active refinement ahead of competition.</div>
+    </div>
+  </div>
+</section>
+
+<section id="dash-cta" style="padding:70px 50px;">
+  <div>
+    <h2>Watch the glasses think.</h2>
+    <p>Connect a real unit over BLE, or run the simulator, to see live IMU orientation, inference confidence, motor state, and battery — mirrored onto a digital twin of the frame itself.</p>
+    <button class="btn btn-solid" style="background:var(--paper); color:var(--peacock-dim); border-color:var(--paper);" onclick="switchMode('dash')">Open the dashboard →</button>
+  </div>
+  <svg class="pulse-icon" viewBox="0 0 200 100" fill="none">
+    <path d="M0 50 H60 L72 20 L86 80 L100 50 L112 65 L124 50 H200" stroke="#3ED598" stroke-width="2" opacity="0.8"/>
+  </svg>
+</section>
+
+</div>
+
+<!-- ============ DASHBOARD MODE ============ -->
+<div id="dashboard-mode">
+  <div class="dash-wrap">
+    <div class="dash-top">
+      <div class="dash-title">Vertigo · Dashboard</div>
+      <div class="conn-status">
+        <div class="dot" id="conn-dot"></div>
+        <span id="conn-text">Disconnected</span>
+      </div>
+    </div>
+
+    <div class="connect-panel" id="connect-panel">
+      <h3>Connect your glasses</h3>
+      <p>Pair directly over Bluetooth Low Energy with the Raspberry Pi Pico 2 W, or run the simulator to preview the dashboard and digital twin without hardware.</p>
+      <button class="ble-btn" id="scan-btn" onclick="startScan()">⦿ Scan for devices</button>
+      <div class="scan-list" id="scan-list"></div>
+    </div>
+
+    <div class="dash-grid" id="dash-grid">
+      <!-- LEFT: digital twin + motor + hud -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Digital twin — frame state</span>
+            <span class="panel-title" id="twin-state">NEUTRAL</span>
+          </div>
+          <div class="twin-stage">
+            <svg class="twin-svg" id="twin-svg" viewBox="0 0 320 200">
+              <g id="twin-group" transform-origin="160 100">
+                <rect x="0" y="0" width="320" height="200" fill="none"/>
+                <path d="M40 90 L110 82 Q160 78 210 82 L280 90" stroke="#8FA69D" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                <rect x="52" y="90" width="76" height="46" rx="12" fill="none" stroke="#8FA69D" stroke-width="2.2" id="lens-l"/>
+                <rect x="192" y="90" width="76" height="46" rx="12" fill="none" stroke="#8FA69D" stroke-width="2.2" id="lens-r"/>
+                <path d="M128 108 L192 108" stroke="#8FA69D" stroke-width="2.2"/>
+                <path d="M40 90 L18 100" stroke="#8FA69D" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M280 90 L302 100" stroke="#8FA69D" stroke-width="2.2" stroke-linecap="round"/>
+                <!-- HUD combiner -->
+                <path d="M196 96 L256 96 L249 126 L203 126 Z" fill="#3ED598" opacity="0.18" id="hud-combiner"/>
+                <!-- motor pip on right temple -->
+                <circle cx="292" cy="98" r="5" fill="#3ED598" id="motor-pip"/>
+                <!-- IMU chip -->
+                <rect x="150" y="98" width="20" height="14" rx="2" fill="#1F5C55" stroke="#3ED598" stroke-width="1"/>
+              </g>
+            </svg>
+            <span class="twin-caption">roll / pitch mapped 1:1 from IMU quaternion</span>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><div class="metric-label">Roll</div><div class="metric-val" id="m-roll">0.0°</div></div>
+            <div class="metric"><div class="metric-label">Pitch</div><div class="metric-val" id="m-pitch">0.0°</div></div>
+            <div class="metric"><div class="metric-label">Yaw rate</div><div class="metric-val" id="m-yaw">0.0°/s</div></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Motor + battery</span></div>
+          <div class="motor-viz">
+            <div class="motor-ring" id="motor-ring"><div class="pip"></div></div>
+            <div style="flex:1;">
+              <div class="metric-label">ERM driver</div>
+              <div class="metric-val ok" id="motor-state" style="font-size:1.1rem;">Idle</div>
+            </div>
+            <div style="flex:1;">
+              <div class="metric-label">Battery (cell A)</div>
+              <div class="battery-bar"><div class="battery-fill" id="batt-fill" style="width:87%;"></div></div>
+              <div style="font-family:var(--mono); font-size:0.7rem; margin-top:4px; opacity:0.6;" id="batt-pct">87%</div>
+            </div>
+          </div>
+          <div class="slider-row">
+            <span>Simulate spin intensity</span>
+            <input type="range" id="spin-slider" min="0" max="100" value="15">
+            <span id="spin-val">15%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: inference + log -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">On-device inference</span></div>
+          <div class="metric-row" style="grid-template-columns:1fr 1fr;">
+            <div class="metric">
+              <div class="metric-label">Balance class</div>
+              <div class="metric-val ok" id="m-class">Stable</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Confidence</div>
+              <div class="metric-val" id="m-conf">0.98</div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg viewBox="0 0 400 120" width="100%" height="100%" preserveAspectRatio="none">
+              <polyline id="conf-chart" fill="none" stroke="#3ED598" stroke-width="2" points=""/>
+              <line x1="0" y1="30" x2="400" y2="30" stroke="#E8654A" stroke-width="1" stroke-dasharray="4 4" opacity="0.5"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="panel" style="flex:1;">
+          <div class="panel-head"><span class="panel-title">Event log — BLE stream from Pico 2 W</span></div>
+          <div class="event-log" id="event-log"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer id="site-footer">
+  <span>Vertigo — Team CultureWear · Life Robotics</span>
+  <span>WRO 2026 · Future Innovators</span>
+</footer>
+
+<script>
+// ---------------- MODE SWITCHING ----------------
+const siteMode = document.getElementById('site-mode');
+const dashMode = document.getElementById('dashboard-mode');
+const btnSite = document.getElementById('btn-site');
+const btnDash = document.getElementById('btn-dash');
+const footer = document.getElementById('site-footer');
+
+function switchMode(mode){
+  if(mode === 'dash'){
+    siteMode.classList.add('hide');
+    dashMode.classList.add('show');
+    btnDash.classList.add('active');
+    btnSite.classList.remove('active');
+    footer.style.display = 'none';
+    document.body.style.background = '#0B0F0E';
+  } else {
+    siteMode.classList.remove('hide');
+    dashMode.classList.remove('show');
+    btnSite.classList.add('active');
+    btnDash.classList.remove('active');
+    footer.style.display = 'flex';
+    document.body.style.background = 'var(--paper)';
+  }
+}
+btnSite.onclick = () => switchMode('site');
+btnDash.onclick = () => switchMode('dash');
+
+// ---------------- FAKE BLE SCAN / SIM ----------------
+const devices = [
+  {name:'VERTIGO-PICO-3F2A', sig:'-52 dBm'},
+  {name:'VERTIGO-PICO-91C0', sig:'-67 dBm'},
+  {name:'Simulator (no hardware)', sig:'local'}
+];
+
+function startScan(){
+  const btn = document.getElementById('scan-btn');
+  const list = document.getElementById('scan-list');
+  btn.disabled = true;
+  btn.textContent = '⦿ Scanning…';
+  list.innerHTML = '';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.textContent = '⦿ Scan for devices';
+    devices.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'scan-item';
+      el.innerHTML = `<span>${d.name}</span><span class="sig">${d.sig}</span>`;
+      el.onclick = () => connectDevice(d.name);
+      list.appendChild(el);
+    });
+  }, 1100);
+}
+
+let simInterval = null;
+
+function connectDevice(name){
+  document.getElementById('conn-dot').classList.add('live');
+  document.getElementById('conn-text').textContent = 'Connected — ' + name;
+  document.getElementById('connect-panel').style.display = 'none';
+  document.getElementById('dash-grid').classList.add('show');
+  logEvent('BLE link established with ' + name, false);
+  logEvent('Streaming IMU @ 50Hz, inference @ 10Hz', false);
+  startSimLoop();
+}
+
+function logEvent(msg, isHit){
+  const log = document.getElementById('event-log');
+  const line = document.createElement('div');
+  line.className = 'log-line' + (isHit ? ' hit' : '');
+  const t = new Date().toLocaleTimeString('en-GB', {hour12:false});
+  line.innerHTML = `<span class="ts">${t}</span><span>${msg}</span>`;
+  log.appendChild(line);
+  while(log.children.length > 40) log.removeChild(log.firstChild);
+}
+
+let confHistory = new Array(60).fill(0.97);
+let battery = 87;
+let phase = 0;
+
+function startSimLoop(){
+  if(simInterval) clearInterval(simInterval);
+  simInterval = setInterval(tick, 160);
+}
+
+function tick(){
+  const slider = parseInt(document.getElementById('spin-slider').value, 10);
+  document.getElementById('spin-val').textContent = slider + '%';
+  phase += 0.15 + slider/220;
+
+  const intensity = slider/100;
+  const roll = Math.sin(phase) * (10 + intensity*55);
+  const pitch = Math.cos(phase*0.7) * (5 + intensity*20);
+  const yawRate = Math.abs(Math.sin(phase*1.3)) * (20 + intensity*300);
+
+  document.getElementById('m-roll').textContent = roll.toFixed(1) + '°';
+  document.getElementById('m-pitch').textContent = pitch.toFixed(1) + '°';
+  document.getElementById('m-yaw').textContent = yawRate.toFixed(1) + '°/s';
+
+  // rotate twin
+  document.getElementById('twin-group').setAttribute('transform', `rotate(${roll.toFixed(1)} 160 108) translate(0 ${pitch.toFixed(1)*0.4})`);
+
+  // confidence + class based on how extreme roll is
+  const risk = Math.min(1, Math.abs(roll)/70);
+  const confidence = Math.max(0.35, 0.985 - risk*0.55 - Math.random()*0.03);
+  confHistory.push(confidence);
+  confHistory.shift();
+
+  const confEl = document.getElementById('m-conf');
+  confEl.textContent = confidence.toFixed(2);
+  const classEl = document.getElementById('m-class');
+  const twinState = document.getElementById('twin-state');
+  const motorRing = document.getElementById('motor-ring');
+  const motorState = document.getElementById('motor-state');
+  const hud = document.getElementById('hud-combiner');
+
+  if(risk > 0.62){
+    classEl.textContent = 'Loss of balance';
+    classEl.className = 'metric-val crit';
+    twinState.textContent = 'ALERT';
+    motorRing.classList.add('buzz');
+    motorState.textContent = 'Firing (dir. cue)';
+    motorState.className = 'metric-val crit';
+    hud.setAttribute('opacity', '0.55');
+    hud.setAttribute('fill', '#E8654A');
+    if(Math.random() < 0.4) logEvent('Balance-state threshold exceeded — motor + HUD cue fired', true);
+  } else if(risk > 0.32){
+    classEl.textContent = 'Correcting';
+    classEl.className = 'metric-val warn';
+    twinState.textContent = 'WATCH';
+    motorRing.classList.remove('buzz');
+    motorState.textContent = 'Standby';
+    motorState.className = 'metric-val warn';
+    hud.setAttribute('opacity', '0.3');
+    hud.setAttribute('fill', '#E8A33D');
+  } else {
+    classEl.textContent = 'Stable';
+    classEl.className = 'metric-val ok';
+    twinState.textContent = 'NEUTRAL';
+    motorRing.classList.remove('buzz');
+    motorState.textContent = 'Idle';
+    motorState.className = 'metric-val ok';
+    hud.setAttribute('opacity', '0.18');
+    hud.setAttribute('fill', '#3ED598');
+  }
+
+  // chart
+  const pts = confHistory.map((v,i) => `${(i/59*400).toFixed(1)},${(120 - v*110).toFixed(1)}`).join(' ');
+  document.getElementById('conf-chart').setAttribute('points', pts);
+
+  // battery drains very slowly, ticks with occasional log
+  battery -= (0.002 + intensity*0.004);
+  if(battery < 0) battery = 0;
+  document.getElementById('batt-fill').style.width = battery.toFixed(0) + '%';
+  document.getElementById('batt-pct').textContent = battery.toFixed(0) + '%';
+  if(battery < 20 && Math.random() < 0.02) logEvent('Cell A below 20% — hot-swap recommended', true);
+}
+
+document.getElementById('spin-slider').addEventListener('input', () => {
+  document.getElementById('spin-val').textContent = document.getElementById('spin-slider').value + '%';
+});
+
+// ================= EASTER EGG: CODE DETECTION & MINI GAME =================
+const konamiCode = [
+  'ArrowUp', 'ArrowUp', 
+  'ArrowDown', 'ArrowDown', 
+  'ArrowLeft', 'ArrowRight', 
+  'ArrowLeft', 'ArrowRight', 
+  'b', 'a', 
+  'Enter'
+];
+let konamiIndex = 0;
+let secretInputBuffer = '';
+const secretPhrase = 'udaysmitgame';
+
+let rickrollInputBuffer = '';
+const rickrollPhrase = 'rick';
+
+document.addEventListener('keydown', (e) => {
+  // Check Konami Code
+  const key = e.key === 'B' || e.key === 'b' ? 'b' : (e.key === 'A' || e.key === 'a' ? 'a' : e.key);
+  if (key === konamiCode[konamiIndex]) {
+    konamiIndex++;
+    if (konamiIndex === konamiCode.length) {
+      konamiIndex = 0;
+      openEasterEgg();
+    }
+  } else {
+    konamiIndex = key === 'ArrowUp' ? 1 : 0;
+  }
+
+  // Check secret phrase "udaysmitgame"
+  if (e.key.length === 1) {
+    secretInputBuffer += e.key.toLowerCase();
+    if (secretInputBuffer.length > secretPhrase.length) {
+      secretInputBuffer = secretInputBuffer.slice(-secretPhrase.length);
+    }
+    if (secretInputBuffer === secretPhrase) {
+      secretInputBuffer = '';
+      openEasterEgg();
+    }
+  }
+
+  // Check secret phrase "rickrollmelol"
+  if (e.key.length === 1) {
+    rickrollInputBuffer += e.key.toLowerCase();
+    if (rickrollInputBuffer.length > rickrollPhrase.length) {
+      rickrollInputBuffer = rickrollInputBuffer.slice(-rickrollPhrase.length);
+    }
+    if (rickrollInputBuffer === rickrollPhrase) {
+      rickrollInputBuffer = '';
+      launchRickroll();
+    }
+  }
+});
+
+function launchRickroll() {
+  const overlay = document.createElement('div');
+  overlay.id = 'rickroll-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;';
+  const iframe = document.createElement('iframe');
+  const origin = window.location.origin !== 'null' ? window.location.origin : '';
+  iframe.src = `https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0&modestbranding=1${origin ? '&origin=' + encodeURIComponent(origin) : ''}`;
+  iframe.style.cssText = 'width:100%;height:100%;border:none;';
+  iframe.allow = 'autoplay; fullscreen; encrypted-media';
+  iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+  iframe.allowFullscreen = true;
+  overlay.appendChild(iframe);
+  document.body.appendChild(overlay);
+
+  const goFullscreen = () => {
+    if (overlay.requestFullscreen) overlay.requestFullscreen().catch(() => {});
+    else if (overlay.webkitRequestFullscreen) overlay.webkitRequestFullscreen();
+  };
+  goFullscreen();
+
+  document.addEventListener('fullscreenchange', function onFsChange() {
+    if (!document.fullscreenElement) {
+      overlay.remove();
+      document.removeEventListener('fullscreenchange', onFsChange);
+    }
+  });
+}
+
+let gameActive = false;
+let score = 0;
+let highscore = parseInt(localStorage.getItem('vertigo_drive_highscore') || '0', 10);
+let speedFactor = 1.0;
+let canvas, ctx;
+let animationFrameId;
+let gameOverState = false;
+
+// Game State
+let playerX = 300;
+const playerY = 240;
+let obstacles = [];
+let roadsideObjects = [];
+let roadScrollY = 0;
+let keysPressed = {};
+
+// Pixel Art Sprites
+const playerCarSprite = [
+  "....XXXX....",
+  "...XXXXXX...",
+  "..XWWWWWWX..",
+  "..XXXXXXXX..",
+  ".XXXXXXXXXX.",
+  "XXXXXXXXXXXX",
+  "XGXXGXXGXXGX",
+  "XXXXXXXXXXXX",
+  ".XXXXXXXXXX.",
+  "..XWWWWWWX..",
+  "..XXXXXXXX..",
+  "..XKKKKKKX..",
+  "..X.YYYY.X..",
+  "...X....X..."
+];
+
+const obstacleCarSprite = [
+  "....XXXX....",
+  "...XXXXXX...",
+  "..XWWWWWWX..",
+  "..XXXXXXXX..",
+  ".XXXXXXXXXX.",
+  "XXXXXXXXXXXX",
+  "XGXXGXXGXXGX",
+  "XXXXXXXXXXXX",
+  ".XXXXXXXXXX.",
+  "..XWWWWWWX..",
+  "..XXXXXXXX..",
+  "..XKKKKKKX..",
+  "..X.YYYY.X.."
+];
+
+const treeSprite = [
+  "....GGGG....",
+  "..GGGGGGGG..",
+  ".GGGGGGGGGG.",
+  "GGGGGGGGGGGG",
+  "....BBBB....",
+  "....BBBB....",
+  "....BBBB...."
+];
+
+const lampSprite = [
+  "...YYYY...",
+  "...LLLL...",
+  "....LL....",
+  "....LL....",
+  "....LL....",
+  "...LLLL..."
+];
+
+// Color Maps
+const playerColorMap = {
+  'X': '#FF3B30',
+  'W': '#AEE2FF',
+  'G': '#1C1C1E',
+  'K': '#2C2C2E',
+  'Y': '#FFCC00'
+};
+
+const obstacleColorMaps = [
+  { 'X': '#34C759', 'W': '#AEE2FF', 'G': '#1C1C1E', 'K': '#2C2C2E', 'Y': '#FFCC00' },
+  { 'X': '#007AFF', 'W': '#AEE2FF', 'G': '#1C1C1E', 'K': '#2C2C2E', 'Y': '#FFCC00' },
+  { 'X': '#AF52DE', 'W': '#AEE2FF', 'G': '#1C1C1E', 'K': '#2C2C2E', 'Y': '#FF9500' },
+  { 'X': '#FF9500', 'W': '#AEE2FF', 'G': '#1C1C1E', 'K': '#2C2C2E', 'Y': '#FF3B30' }
+];
+
+const treeColorMap = {
+  'G': '#248A3D',
+  'B': '#5C3818'
+};
+
+const lampColorMap = {
+  'Y': '#FFD60A',
+  'L': '#8E8E93'
+};
+
+function drawPixelSprite(ctx, px, py, sprite, pixelSize, colorMap) {
+  const height = sprite.length;
+  const width = sprite[0].length;
+  const startX = px - (width * pixelSize) / 2;
+  const startY = py - (height * pixelSize) / 2;
+  
+  for (let r = 0; r < height; r++) {
+    for (let c = 0; c < width; c++) {
+      const char = sprite[r][c];
+      if (char !== '.') {
+        ctx.fillStyle = colorMap[char] || '#fff';
+        ctx.fillRect(startX + c * pixelSize, startY + r * pixelSize, pixelSize, pixelSize);
+      }
+    }
+  }
+}
+
+function openEasterEgg() {
+  if (gameActive) return;
+  let modal = document.getElementById('ee-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'ee-modal';
+    modal.style.cssText = `
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(6, 8, 7, 0.97);
+      backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: center;
+      color: #3ED598; font-family: 'IBM Plex Mono', monospace;
+    `;
+    modal.innerHTML = `
+      <div style="width: 90%; max-width: 680px; background: #000; border: 2px solid #3ED598; border-radius: 12px; padding: 24px; box-shadow: 0 0 40px rgba(62,213,152,0.3); position: relative;">
+        <button id="ee-close-btn" style="position: absolute; top: 16px; right: 16px; background: transparent; border: 1px solid #E8654A; color: #E8654A; padding: 4px 10px; cursor: pointer; border-radius: 4px; font-family: inherit; font-size: 0.8rem; transition: all 0.2s;">[X] CLOSE (ESC)</button>
+        <h2 style="font-family: 'Fraunces', serif; color: #fff; margin-top: 0; font-size: 1.8rem; margin-bottom: 8px;">Vertigo Highway: Retro Drive</h2>
+        <p style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 20px;">CYBERPUNK SIMULATION. Use keyboard left & right arrow keys to dodge traffic and survive the endless highway.</p>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.9rem;">
+          <div>SCORE: <span id="ee-score">0</span></div>
+          <div>HIGH SCORE: <span id="ee-highscore">\${highscore}</span></div>
+        </div>
+        
+        <canvas id="ee-canvas" width="600" height="300" style="width: 100%; height: auto; background: #080D0B; border: 1px solid rgba(62,213,152,0.2); border-radius: 6px; display: block;"></canvas>
+        
+        <div style="margin-top: 16px; text-align: center; font-size: 0.75rem; opacity: 0.7; letter-spacing: 0.05em;">
+          USE <span style="border: 1px solid #3ED598; padding: 2px 6px; border-radius: 3px;">←</span> AND <span style="border: 1px solid #3ED598; padding: 2px 6px; border-radius: 3px;">→</span> ARROW KEYS TO DRIVE AND DODGE TRAFFIC
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    document.getElementById('ee-close-btn').addEventListener('click', closeEasterEgg);
+    document.getElementById('ee-close-btn').addEventListener('mouseenter', function() {
+      this.style.background = '#E8654A';
+      this.style.color = '#000';
+    });
+    document.getElementById('ee-close-btn').addEventListener('mouseleave', function() {
+      this.style.background = 'transparent';
+      this.style.color = '#E8654A';
+    });
+    
+    document.addEventListener('keydown', handleGlobalKeys);
+  } else {
+    modal.style.display = 'flex';
+  }
+  
+  canvas = document.getElementById('ee-canvas');
+  ctx = canvas.getContext('2d');
+  
+  gameActive = true;
+  gameOverState = false;
+  playerX = 300;
+  obstacles = [];
+  roadsideObjects = [];
+  score = 0;
+  speedFactor = 1.0;
+  document.getElementById('ee-score').textContent = '0';
+  document.getElementById('ee-highscore').textContent = highscore;
+  
+  keysPressed = {};
+  window.addEventListener('keydown', handleGameInputDown);
+  window.addEventListener('keyup', handleGameInputUp);
+  
+  runGameLoop();
+}
+
+function handleGlobalKeys(e) {
+  if (e.key === 'Escape') {
+    closeEasterEgg();
+  }
+}
+
+function closeEasterEgg() {
+  gameActive = false;
+  cancelAnimationFrame(animationFrameId);
+  window.removeEventListener('keydown', handleGameInputDown);
+  window.removeEventListener('keyup', handleGameInputUp);
+  const modal = document.getElementById('ee-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleGameInputDown(e) {
+  if (!gameActive) return;
+  keysPressed[e.key] = true;
+  
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+  }
+  
+  if (e.key === 'Enter' && gameOverState) {
+    restartGame();
+    e.preventDefault();
+  }
+}
+
+function handleGameInputUp(e) {
+  if (!gameActive) return;
+  keysPressed[e.key] = false;
+}
+
+function restartGame() {
+  gameOverState = false;
+  playerX = 300;
+  obstacles = [];
+  roadsideObjects = [];
+  score = 0;
+  speedFactor = 1.0;
+  document.getElementById('ee-score').textContent = '0';
+}
+
+function runGameLoop() {
+  if (!gameActive) return;
+  updatePhysics();
+  drawGame();
+  animationFrameId = requestAnimationFrame(runGameLoop);
+}
+
+function updatePhysics() {
+  if (gameOverState) return;
+  
+  const roadSpeed = 8 * speedFactor;
+  roadScrollY += roadSpeed;
+  if (roadScrollY >= 60) roadScrollY = 0;
+  
+  if (keysPressed['ArrowLeft'] || keysPressed['a'] || keysPressed['A']) {
+    playerX -= 6;
+  }
+  if (keysPressed['ArrowRight'] || keysPressed['d'] || keysPressed['D']) {
+    playerX += 6;
+  }
+  
+  const leftBound = 175;
+  const rightBound = 425;
+  if (playerX < leftBound) playerX = leftBound;
+  if (playerX > rightBound) playerX = rightBound;
+  
+  if (Math.random() < 0.025 * speedFactor && obstacles.length < 5) {
+    const laneX = [200, 300, 400][Math.floor(Math.random() * 3)];
+    let tooClose = false;
+    for (let o of obstacles) {
+      if (o.y < 120 && Math.abs(o.x - laneX) < 60) {
+        tooClose = true;
+      }
+    }
+    if (!tooClose) {
+      obstacles.push({
+        x: laneX,
+        y: -60,
+        speed: (2 + Math.random() * 3) * speedFactor,
+        colorIndex: Math.floor(Math.random() * obstacleColorMaps.length)
+      });
+    }
+  }
+  
+  const pSize = 3;
+  const pWidth = 12 * pSize;
+  const pHeight = 14 * pSize;
+  
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    let o = obstacles[i];
+    o.y += o.speed + roadSpeed * 0.3;
+    
+    if (o.y > canvas.height + 60) {
+      obstacles.splice(i, 1);
+      score += 15;
+      continue;
+    }
+    
+    if (Math.abs(o.x - playerX) < (pWidth - 6) && Math.abs(o.y - playerY) < (pHeight - 4)) {
+      gameOverState = true;
+      const finalScore = Math.floor(score);
+      if (finalScore > highscore) {
+        highscore = finalScore;
+        localStorage.setItem('vertigo_drive_highscore', highscore);
+        document.getElementById('ee-highscore').textContent = highscore;
+      }
+    }
+  }
+  
+  if (Math.random() < 0.05 && roadsideObjects.length < 8) {
+    const isLeft = Math.random() < 0.5;
+    roadsideObjects.push({
+      x: isLeft ? 50 + Math.random() * 50 : 500 + Math.random() * 50,
+      y: -60,
+      type: Math.random() < 0.6 ? 'tree' : 'lamp'
+    });
+  }
+  
+  for (let i = roadsideObjects.length - 1; i >= 0; i--) {
+    let obj = roadsideObjects[i];
+    obj.y += roadSpeed;
+    if (obj.y > canvas.height + 60) {
+      roadsideObjects.splice(i, 1);
+    }
+  }
+  
+  score += 0.15;
+  document.getElementById('ee-score').textContent = Math.floor(score);
+  speedFactor = 1.0 + (score / 1500);
+}
+
+function drawGame() {
+  ctx.fillStyle = '#111613';
+  ctx.fillRect(150, 0, 300, canvas.height);
+  
+  ctx.fillStyle = '#060B08';
+  ctx.fillRect(0, 0, 150, canvas.height);
+  ctx.fillRect(450, 0, 150, canvas.height);
+  
+  ctx.strokeStyle = 'rgba(232, 101, 74, 0.04)';
+  ctx.lineWidth = 1;
+  const sideGridSize = 25;
+  for (let x = 0; x < 150; x += sideGridSize) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let x = 450; x < canvas.width; x += sideGridSize) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+  }
+  for (let y = 0; y < canvas.height; y += sideGridSize) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(150, y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(450, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+  
+  ctx.strokeStyle = '#E8EDE9';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(150, 0);
+  ctx.lineTo(150, canvas.height);
+  ctx.moveTo(450, 0);
+  ctx.lineTo(450, canvas.height);
+  ctx.stroke();
+  
+  ctx.strokeStyle = 'rgba(62, 213, 152, 0.25)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([25, 25]);
+  ctx.lineDashOffset = -roadScrollY;
+  ctx.beginPath();
+  ctx.moveTo(250, 0);
+  ctx.lineTo(250, canvas.height);
+  ctx.moveTo(350, 0);
+  ctx.lineTo(350, canvas.height);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  for (let obj of roadsideObjects) {
+    if (obj.type === 'tree') {
+      drawPixelSprite(ctx, obj.x, obj.y, treeSprite, 4, treeColorMap);
+    } else {
+      drawPixelSprite(ctx, obj.x, obj.y, lampSprite, 4, lampColorMap);
+    }
+  }
+  
+  for (let o of obstacles) {
+    drawPixelSprite(ctx, o.x, o.y, obstacleCarSprite, 3, obstacleColorMaps[o.colorIndex]);
+  }
+  
+  drawPixelSprite(ctx, playerX, playerY, playerCarSprite, 3, playerColorMap);
+  
+  if (gameOverState) {
+    ctx.fillStyle = 'rgba(6, 8, 7, 0.88)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#E8654A';
+    ctx.font = '24px "IBM Plex Mono", monospace';
+    ctx.shadowColor = '#E8654A';
+    ctx.shadowBlur = 6;
+    ctx.fillText('CRASH DETECTED', cx = canvas.width / 2, canvas.height / 2 - 20);
+    ctx.shadowBlur = 0;
+    
+    ctx.fillStyle = '#fff';
+    ctx.font = '12px "IBM Plex Mono", monospace';
+    ctx.fillText('SIMULATION ENDED', cx, canvas.height / 2 + 10);
+    
+    ctx.fillStyle = 'rgba(62, 213, 152, 0.8)';
+    ctx.font = '11px "IBM Plex Mono", monospace';
+    ctx.fillText('PRESS ENTER TO RESTART', cx, canvas.height / 2 + 45);
+  }
+}
+</script>
+
+</body>
+</html>
